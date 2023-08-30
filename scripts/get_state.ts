@@ -3,13 +3,13 @@ import moment from "moment-timezone";
 const BigNumber = require("bignumber.js");
 
 async function main() {
-  const sbPushAddress = process.env.SWITCHBOARD_PUSH_ADDRESS ?? "";
+  const sbPushAddress = process.env.EXAMPLE_PROGRAM ?? "";
 
   const divisor = new BigNumber("1000000000000000000");
 
   if (!sbPushAddress) {
     throw new Error(
-      "Please set the diamond address with: export SWITCHBOARD_PUSH_ADDRESS=..."
+      "Please set the diamond address with: export EXAMPLE_PROGRAM=..."
     );
   }
 
@@ -24,7 +24,9 @@ async function main() {
     console.log(
       feedName,
       feed.feedId.toString(),
-      new BigNumber(feed.latestResult.value.toString()).dividedBy(divisor).toString(),
+      new BigNumber(feed.latestResult.value.toString())
+        .dividedBy(divisor)
+        .toString(),
       moment(new Date(feed.latestResult.updatedAt.toNumber() * 1000))
         .tz("America/New_York")
         .format("YYYY-MM-DD HH:mm:ss")

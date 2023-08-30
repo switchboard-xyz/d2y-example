@@ -11,8 +11,10 @@ all: build
 
 docker_build:
 	${DOCKER_BUILD_COMMAND} --pull -f Dockerfile -t ${DOCKER_IMAGE_NAME}:dev --load ./
+	@make measurement
 docker_publish:
 	${DOCKER_BUILD_COMMAND} --pull -f Dockerfile -t ${DOCKER_IMAGE_NAME} --push ./
+	@make measurement
 
 build: docker_build measurement
 
@@ -23,6 +25,8 @@ measurement:
 	@docker cp my-switchboard-function:/measurement.txt measurement.txt
 	@docker stop my-switchboard-function > /dev/null
 	@docker rm my-switchboard-function > /dev/null
+	@printf "Measurement: "
+	@cat measurement.txt
 
 # Task to clean up the compiled rust application
 clean:

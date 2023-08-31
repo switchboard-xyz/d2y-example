@@ -293,13 +293,12 @@ Run the following to test your function:
 
 ```bash
 export CHAIN_ID=12345 # can be any integer
-export VERIFYING_CONTRACT=${SWITCHBOARD_ADDRESS?} # can be any valid address
 export FUNCTION_KEY=${FUNCTION_ID?} # can be any valid address
-export CHAIN_ID=12345 # can be any integer
-export VERIFIER=$SWITCHBOARD_ADDRESS # can be any valid address
-export PAYER=$SWITCHBOARD_ADDRESS # can be any valid address
-export REWARD_RECEIVER=$SWITCHBOARD_ADDRESS # can be any valid address
-export EXAMPLE_PROGRAM=$SWITCHBOARD_ADDRESS # can be any valid address
+export VERIFIER=${SWITCHBOARD_ADDRESS?} # can be any valid address
+export PAYER=${SWITCHBOARD_ADDRESS?} # can be any valid address
+export VERIFYING_CONTRACT=${SWITCHBOARD_ADDRESS?} # can be any valid address
+export REWARD_RECEIVER=${SWITCHBOARD_ADDRESS?} # can be any valid address
+export EXAMPLE_PROGRAM=${SWITCHBOARD_ADDRESS?} # can be any valid address
 cargo build
 cargo run # Note: this will include a warning about a missing quote which can be safely ignored.
 ```

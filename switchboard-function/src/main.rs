@@ -10,7 +10,7 @@ use switchboard_evm::sdk::EVMFunctionRunner;
 pub use switchboard_utils::reqwest;
 use rust_decimal::prelude::FromPrimitive;
 
-static UNUSED_URL: &str = "http://_";
+static UNUSED_URL: &str = "https://goerli-rollup.arbitrum.io/rpc";
 
 #[derive(Debug, Deserialize)]
 pub struct DeribitRespnseInner {

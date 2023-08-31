@@ -1,7 +1,7 @@
 {
   "_format": "hh-sol-artifact-1",
   "contractName": "Receiver",
-  "sourceName": "contracts/src/SwitchboardPushReceiver/Receiver/Receiver.sol",
+  "sourceName": "contracts/src/example1/Receiver/Receiver.sol",
   "abi": [
     {
       "inputs": [

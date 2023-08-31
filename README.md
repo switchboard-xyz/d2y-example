@@ -20,7 +20,6 @@
 - [Prerequisites](#prerequisites)
   - [Installing Docker](#installing-docker)
   - [Docker Setup](#docker-setup)
-  - [Build and Push](#build-and-push)
 - [Components](#components)
   - [Contract](#contract)
   - [Switchboard Function](#switchboard-function)

@@ -107,7 +107,7 @@ const config: HardhatUserConfig = {
     },
   },
   diamondAbi: {
-    name: "SwitchboardPushReceiver",
+    name: "Example",
     strict: false,
     exclude: [
       "DiamondCutFacet",
@@ -117,11 +117,11 @@ const config: HardhatUserConfig = {
       "IERC173",
       "IERC165",
       "LibDiamond",
-      "Aggregator",
-      "AggregatorV3Interface",
       "EventLib",
       "ErrorLib",
       "AdminLib",
+      "Aggregator",
+      "AggregatorLib",
     ],
   },
   zksolc: {

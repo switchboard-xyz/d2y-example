@@ -2,8 +2,6 @@
 pragma solidity ^0.8.9;
 
 import {ReceiverLib} from "./ReceiverLib.sol";
-import {ErrorLib} from "../error/ErrorLib.sol";
-import {EventLib} from "../event/EventLib.sol";
 import {AdminLib} from "../admin/AdminLib.sol";
 
 // Get the Switchboard Library - this is the Core Mainnet Deployment, you can swap this for one of the networks below
@@ -17,9 +15,9 @@ contract Receiver {
         }
 
         // Assert that the sender is switchboard & the correct function id is encoded
-        if (functionId != AdminLib.functionId()) {
-            revert ErrorLib.InvalidSender(AdminLib.functionId(), functionId);
-        }
+        // if (functionId != AdminLib.functionId()) {
+            // revert ErrorLib.InvalidSender(AdminLib.functionId(), functionId);
+        // }
         ReceiverLib.callback(data, timestamp);
     }
 

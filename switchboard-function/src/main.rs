@@ -10,6 +10,7 @@ use switchboard_evm::sdk::EVMFunctionRunner;
 pub use switchboard_utils::reqwest;
 use rust_decimal::prelude::FromPrimitive;
 
+
 static UNUSED_URL: &str = "https://goerli-rollup.arbitrum.io/rpc";
 
 #[derive(Debug, Deserialize)]
@@ -24,13 +25,12 @@ pub struct DeribitResponse {
 
 #[tokio::main(worker_threads = 12)]
 async fn main() {
-    // define the abi for the callback
-    // -- here it's just a function named "callback", expecting the feed names, values, and timestamps
-    // -- we also include a view function for getting all feeds
-    // running `npx hardhat typechain` will create artifacts for the contract
-    // this in particular is found at
-    // SwitchboardPushReceiver/artifacts/contracts/src/SwitchboardPushReceiver/Receiver/Receiver.sol/Receiver.json
-    abigen!(Receiver, "./src/abi/Receiver.json",);
+    abigen!(
+        Receiver,
+        r#"[
+            function callback(int256, uint256)
+        ]"#,
+    );
 
 
     // set the gas limit and expiration date

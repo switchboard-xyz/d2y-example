@@ -1,9 +1,6 @@
 //SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
-import {EventLib} from "../event/EventLib.sol";
-import {ErrorLib} from "../error/ErrorLib.sol";
-
 library ReceiverLib {
     bytes32 constant DIAMOND_STORAGE_POSITION = keccak256("receiverlib.v1.storage");
 

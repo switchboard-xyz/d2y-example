@@ -46,17 +46,12 @@ async fn main() {
     .await
     .unwrap();
 
+    let timestamp = derebit_response.result.timestamp.into();
     let mut mark_iv = Decimal::from_f64(derebit_response.result.mark_iv).unwrap();
     mark_iv.rescale(8);
-    println!("{:#?}", derebit_response);
 
-    // send the callback to the contract
-    let callback = receiver_contract.callback(
-        mark_iv.mantissa().into(),
-        derebit_response.result.timestamp.into(),
-    );
-
-    // --- Emit the result ---
+    // --- Send the callback to the contract with Switchboard verification ---
+    let callback = receiver_contract.callback(mark_iv.mantissa().into(), timestamp);
     function_runner
         .emit(
             receiver,

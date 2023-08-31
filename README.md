@@ -95,7 +95,6 @@ When you deploy this contract, it will await to be bound to a switchboard functi
 
 #### Picking a network and setting up your environment
 
-- navigate to the [Project README.md](../../README.md) and find the switchboard deployment address
 - set the `SWITCHBOARD_ADDRESS` env variable to target whichever address is appropriate for the network you're targeting
 - for arbitrum testnet, this is: `0xA3c9F9F6E40282e1366bdC01C1D30F7F7F58888e`
 

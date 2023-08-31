@@ -26,10 +26,10 @@ pub struct DeribitResponse {
 #[tokio::main(worker_threads = 12)]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // --- Initialize clients ---
-    let function_runner = EVMFunctionRunner::new().unwrap();
-    let receiver: Address = env!("EXAMPLE_PROGRAM").parse().unwrap();
+    let function_runner = EVMFunctionRunner::new()?;
+    let receiver: Address = env!("EXAMPLE_PROGRAM").parse()?;
     let client = SignerMiddleware::new_with_provider_chain(
-        Provider::<Http>::try_from(UNUSED_URL).unwrap(),
+        Provider::<Http>::try_from(UNUSED_URL)?,
         function_runner.enclave_wallet.clone(),
     )
     .await?;

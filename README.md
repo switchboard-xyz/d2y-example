@@ -200,7 +200,7 @@ tokio = "^1"
 futures = "0.3"
 
 # at a minimum you'll need to include the following packages
-ethers = { version = "2.0.7", features = ["legacy"] } # legacy is only for networks that do not support https://eips.ethereum.org/EIPS/eip-2718
+ethers = { version = "2.0.7", features = ["legacy"] }
 switchboard-evm = "0.3.9"
 ```
 

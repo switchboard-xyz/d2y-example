@@ -1,9 +1,9 @@
-# Switchboard Push Receiver
+# Switchboard Function Example
 
 <div align="center">
   <img src="https://github.com/switchboard-xyz/sbv2-core/raw/main/website/static/img/icons/switchboard/avatar.png" />
 
-  <h1>Switchboard<br>EVM Functions Template</h1>
+  <h1>Switchboard<br>D2Y Function Example</h1>
 
   <p>
     <a href="https://discord.gg/switchboardxyz">
@@ -82,7 +82,7 @@ pnpm i
 
 ### Contract
 
-This SwitchboardPushReceiver contract acts as the ingestor of the switchboard-function in this directory to fetch all prices from major exchanges. The Switchboard Push Receiver is an example of the [ERC2535 diamond contract pattern](https://autifynetwork.com/exploring-erc-2535-the-diamond-standard-for-smart-contracts/) so it can be extended and upgraded for your needs.
+This example contract acts as the ingestor of the switchboard-function in this directory to fetch implied volatility parameters via deribit. The exaple contract is an example of the [ERC2535 diamond contract pattern](https://autifynetwork.com/exploring-erc-2535-the-diamond-standard-for-smart-contracts/) so it can be extended and upgraded for your needs.
 
 When you deploy this contract, it will await to be bound to a switchboard function calling into it.
 
@@ -106,7 +106,7 @@ More deploy commands are available in [package.json](./package.json) scripts.
 You will see the last line of this script output
 
 ```bash
-export SWITCHBOARD_PUSH_ADDRESS=<RECEIVER_ADDRESS>
+export EXAMPLE_PROGRAM=<RECEIVER_ADDRESS>
 ```
 
 ### Switchboard Function
@@ -127,12 +127,14 @@ You'll also need to pick a container name that your switchboard function will us
 
 ```bash
 export CONTAINER_NAME=your_docker_username/switchboard-function
+export EXAMPLE_PROGRAM=<RECEIVER_ADDRESS>
 ```
 
 Here, set the name of your container and deploy it using:
 
 ```bash
 export CONTAINER_NAME=your_docker_username/switchboard-function
+export EXAMPLE_PROGRAM=<RECEIVER_ADDRESS>
 make docker_publish
 ```
 
@@ -142,13 +144,12 @@ After this is published, you are free to make your function account to set the r
 
 You'll need the queue id and switchboard contract address from the [Project README.md](../../README.md) for the network you're targetting.
 
-See `scripts/create_function.ts` to create and deploy the function:
+You can use the Switchboard cli to bind this docker container to an on-chain representation:
 
 ```bash
-export QUEUE_ID=0x392a3217624aC36b1EC1Cf95905D49594A4DCF64 # placeholder
-export SCHEDULE="30 * * * * *" # every 30 seconds
-export CONTAINER_NAME=switchboardlabs/test
-pnpm exec hardhat run scripts/create_function.ts  --network arbitrumTestnet # or coredaoTestnet
+export SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET=0xA3c9F9F6E40282e1366bdC01C1D30F7F7F58888e
+export MEASUREMENT=<YOUR CONTAINER MEASUREMENT>
+sb evm function create $QUEUE_ADDRESS --container ${CONTAINER_NAME} --schedule "*/30 * * * * *" --containerRegistry dockerhub  --mrEnclave ${MEASUREMENT?} --name "d2y_example" --fundAmount 0.025 --chain arbitrum --account /path/to/signer --network testnet --programId $SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET
 ```
 
 ### Adding Funding to Function
@@ -156,18 +157,16 @@ pnpm exec hardhat run scripts/create_function.ts  --network arbitrumTestnet # or
 Add funds to your function by doing the following:
 
 ```bash
-export FUNCTION_ID=0x96cE076e3Dda35679316b12F2b5F7b4A92C9a294
-export ETH_VALUE="0.1"
-pnpm exec hardhat run scripts/extend_function.ts  --network arbitrumTestnet
+ sb evm function fund $FUNCTION_ID --fundAmount .1 --chain $CHAIN --account /path/to/signer --network $CLUSTER --programId $SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET
 ```
 
-### Printing Function Data
+### Printing the state of your callback
 
-Now view your function config to ensure it is to your liking:
+This repo contains an example script to view the current verified deribit Implied volatility info
+currently in contract:
 
 ```bash
-export FUNCTION_ID=0x96cE076e3Dda35679316b12F2b5F7b4A92C9a294
-pnpm exec hardhat run scripts/check_function.ts  --network arbitrumTestnet
+npx hardhat run --network arbitrumTestnet scripts/get_state.ts
 ```
 
 ## Writing Switchboard Rust Functions

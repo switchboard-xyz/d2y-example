@@ -89,14 +89,15 @@ sb evm function --help
 
 ### Contract
 
-This example contract acts as the ingestor of the switchboard-function in this directory to fetch implied volatility parameters via deribit. The exaple contract is an example of the [ERC2535 diamond contract pattern](https://autifynetwork.com/exploring-erc-2535-the-diamond-standard-for-smart-contracts/) so it can be extended and upgraded for your needs.
+This example contract acts as the ingestor of the switchboard-function in this directory to fetch implied volatility parameters via deribit. The example contract is an example of the [ERC2535 diamond contract pattern](https://autifynetwork.com/exploring-erc-2535-the-diamond-standard-for-smart-contracts/) so it can be extended and upgraded for your needs.
 
 When you deploy this contract, it will await to be bound to a switchboard function calling into it.
 
 #### Picking a network and setting up your environment
 
 - navigate to the [Project README.md](../../README.md) and find the switchboard deployment address
-- set the `SWITCHBOARD_ADDRESS` env variable to target whichever address is appropriate for the network you're targetting
+- set the `SWITCHBOARD_ADDRESS` env variable to target whichever address is appropriate for the network you're targeting
+- for arbitrum testnet, this is: `0xA3c9F9F6E40282e1366bdC01C1D30F7F7F58888e`
 
 To first deploy the contract, run:
 
@@ -151,8 +152,6 @@ After this is published, you are free to make your function account to set the r
 
 ### Initializing the function
 
-You'll need the queue id and switchboard contract address from the [Project README.md](../../README.md) for the network you're targetting.
-
 You can use the Switchboard cli to bind this docker container to an on-chain representation:
 
 ```bash
@@ -167,7 +166,7 @@ sb evm function create $QUEUE_ADDRESS --container ${CONTAINER_NAME} --schedule "
 Add funds to your function by doing the following:
 
 ```bash
- sb evm function fund $FUNCTION_ID --fundAmount .1 --chain $CHAIN --account /path/to/signer --network $CLUSTER --programId $SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET
+sb evm function fund $FUNCTION_ID --fundAmount .1 --chain $CHAIN --account /path/to/signer --network $CLUSTER --programId $SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET
 ```
 
 ### Printing the state of your callback
@@ -308,6 +307,8 @@ WARNING: Error generating quote. Function will not be able to be transmitted cor
 FN_OUT: 7b2276657273696f6e223a312c2271756f7465223a5b5d2c22666e5f6b6579223a5b3134342c32332c3233322c34342c39382c32302c39372c3232392c3138392c33302c3235322c3133362c37362c332c3136382c3130362c3138322c34352c3137352c3137325d2c227369676e6572223a5b3135382c32332c3137302c3133322c3230302c3130322c35302c38352c31302c3134382c3235322c35372c3132362c372c31372c32352c37322c3131342c38322c3134365d2c22666e5f726571756573745f6b6579223a5b5d2c22666e5f726571756573745f68617368223a5b5d2c22636861696e5f726573756c745f696e666f223a7b2245766d223a7b22747873223a5b7b2265787069726174696f6e5f74696d655f7365636f6e6473223a313639313633383836332c226761735f6c696d6974223a2235353030303030222c2276616c7565223a2230222c22746f223a5b38332c3130372c3135352c35382c39382c3132382c37332c3233392c3134382c3133332c3133342c33392c3131382c31362c34382c3235302c3130372c3133382c3234382c3135375d2c2266726f6d223a5b3135382c32332c3137302c3133322c3230302c3130322c35302c38352c31302c3134382c3235322c35372c3132362c372c31372c32352c37322c3131342c38322c3134365d2c2264617461223a5b3136302c3232332c3131392c3130362...
 ```
 
+The `error` above simply means your function failed to produce a secure signature for the test since it was run outside the enclave.
+
 ### Deploying and Maintenance
 
 After you publish the function and create it on the blockchain, you must keep the function escrow account funded to cover gas fees. Revisions to the function can be made by deploying a new version and updating the function config on-chain.
@@ -389,4 +390,3 @@ contract ReceiverExample is Recipient {
   }
 }
 ```
-# d2y-example

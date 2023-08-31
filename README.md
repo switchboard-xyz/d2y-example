@@ -78,6 +78,12 @@ docker login --username <your-username> --password <your-password>
 pnpm i
 ```
 
+### Install Switchboard cli
+
+```bash
+npm i -g @switchboard-xyz/cli@latest
+```
+
 ## Components
 
 ### Contract

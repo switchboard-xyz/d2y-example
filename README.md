@@ -247,7 +247,7 @@ async fn main() {
 
     // create a client, wallet and middleware. This is just so we can create the contract instance and sign the txn.
     // @TODO: update the provider to whichever network you're using
-    let provider = Provider::<Http>::try_from("https://rpc.test.btcs.network").unwrap();
+    let provider = Provider::<Http>::try_from("https://goerli-rollup.arbitrum.io/rpc").unwrap();
     let client = Arc::new(
         SignerMiddleware::new_with_provider_chain(provider.clone(), function_runner.enclave_wallet.clone())
             .await

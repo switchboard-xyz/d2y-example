@@ -19,6 +19,7 @@ switchboard-common = "0.8.6"
 switchboard-evm = "0.3.8"
 bytemuck = "1.13.1"
 rust_decimal = { version = "1.30.0", features = ["maths"] }
+chrono = "0.4.28"
 
 [dev-dependencies]
 env_logger = "0.10"

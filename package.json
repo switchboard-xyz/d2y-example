@@ -118,7 +118,7 @@
     "@openzeppelin/contracts": "^4.8.3",
     "@openzeppelin/hardhat-upgrades": "^1.26.0",
     "@switchboard-xyz/common": "^2.2.3",
-    "@switchboard-xyz/evm.js": "3.12.30",
+    "@switchboard-xyz/evm.js": "3.12.31",
     "@tenderly/hardhat-tenderly": "^1.7.7",
     "@truffle/dashboard-hardhat-plugin": "^0.2.7",
     "@typechain/ethers-v5": "^10.2.0",

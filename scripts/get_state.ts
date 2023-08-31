@@ -1,11 +1,12 @@
 import { ethers } from "hardhat";
 import moment from "moment-timezone";
+import Big from "big.js";
 const BigNumber = require("bignumber.js");
 
 async function main() {
   const sbPushAddress = process.env.EXAMPLE_PROGRAM ?? "";
 
-  const divisor = new BigNumber("1000000000000000000");
+  const divisor = new BigNumber("100000000");
 
   if (!sbPushAddress) {
     throw new Error(
@@ -16,22 +17,11 @@ async function main() {
   const push = await ethers.getContractAt("Receiver", sbPushAddress);
   const p = await push.deployed();
 
-  const feeds = await p.getAllFeeds();
-  console.log(feeds);
-
-  feeds.map((feed) => {
-    const feedName = ethers.utils.parseBytes32String(feed.feedName);
-    console.log(
-      feedName,
-      feed.feedId.toString(),
-      new BigNumber(feed.latestResult.value.toString())
-        .dividedBy(divisor)
-        .toString(),
-      moment(new Date(feed.latestResult.updatedAt.toNumber() * 1000))
-        .tz("America/New_York")
-        .format("YYYY-MM-DD HH:mm:ss")
-    );
-  });
+  const [iv, timestamp] = await p.viewData();
+  console.log("============");
+  console.log(`Implied Vol: ${new Big(iv.toString()).div(divisor).toString()}`);
+  console.log(`Timestamp: ${timestamp}`);
+  console.log("============");
 }
 
 main()

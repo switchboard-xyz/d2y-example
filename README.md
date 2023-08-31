@@ -82,6 +82,7 @@ pnpm i
 
 ```bash
 npm i -g @switchboard-xyz/cli@latest
+sb evm function --help
 ```
 
 ## Components
@@ -124,6 +125,7 @@ The bulk of the function logic can be found in [./switchboard-function/src/main.
 Build functions from the `switchboard-function/` directory with
 
 ```bash
+cd switchboard-function
 make docker_build
 ```
 
@@ -139,6 +141,7 @@ export EXAMPLE_PROGRAM=<RECEIVER_ADDRESS>
 Here, set the name of your container and deploy it using:
 
 ```bash
+cd switchboard-function
 export CONTAINER_NAME=your_docker_username/switchboard-function
 export EXAMPLE_PROGRAM=<RECEIVER_ADDRESS>
 make docker_publish
@@ -154,6 +157,7 @@ You can use the Switchboard cli to bind this docker container to an on-chain rep
 
 ```bash
 export SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET=0xA3c9F9F6E40282e1366bdC01C1D30F7F7F58888e
+export QUEUE_ADDRESS=0x54f8A91bE5baAD3E2368b00A11bF4012EA6b031F # default testnet queue
 export MEASUREMENT=<YOUR CONTAINER MEASUREMENT>
 sb evm function create $QUEUE_ADDRESS --container ${CONTAINER_NAME} --schedule "*/30 * * * * *" --containerRegistry dockerhub  --mrEnclave ${MEASUREMENT?} --name "d2y_example" --fundAmount 0.025 --chain arbitrum --account /path/to/signer --network testnet --programId $SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET
 ```
@@ -168,7 +172,7 @@ Add funds to your function by doing the following:
 
 ### Printing the state of your callback
 
-This repo contains an example script to view the current verified deribit Implied volatility info
+This repo contains an example script to view the current verified deribit implied volatility info
 currently in contract:
 
 ```bash

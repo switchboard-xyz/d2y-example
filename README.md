@@ -146,6 +146,8 @@ export EXAMPLE_PROGRAM=<RECEIVER_ADDRESS>
 make docker_publish
 ```
 
+Common gotcha: make sure this published container is publically visible
+
 After this is published, you are free to make your function account to set the rate of run for the function.
 
 ### Initializing the function

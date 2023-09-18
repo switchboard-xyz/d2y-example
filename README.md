@@ -3,7 +3,7 @@
 <div align="center">
   <img src="https://github.com/switchboard-xyz/sbv2-core/raw/main/website/static/img/icons/switchboard/avatar.png" />
 
-  <h1>Switchboard<br>D2Y Function Example</h1>
+  <h1>Switchboard<br>Options Platform Function Example</h1>
 
   <p>
     <a href="https://discord.gg/switchboardxyz">

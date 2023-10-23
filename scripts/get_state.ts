@@ -4,13 +4,13 @@ import Big from "big.js";
 const BigNumber = require("bignumber.js");
 
 async function main() {
-  const sbPushAddress = process.env.EXAMPLE_PROGRAM ?? "";
+  const sbPushAddress = process.env.CALLBACK_ADDRESS ?? "";
 
   const divisor = new BigNumber("100000000");
 
   if (!sbPushAddress) {
     throw new Error(
-      "Please set the diamond address with: export EXAMPLE_PROGRAM=..."
+      "Please set the diamond address with: export CALLBACK_ADDRESS=..."
     );
   }
 

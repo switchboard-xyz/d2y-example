@@ -14,7 +14,7 @@ export async function deployDiamond() {
   let switchboardAddress =
     process.env.SWITCHBOARD_ADDRESS ?? process.env.DIAMOND_ADDRESS ?? "";
 
-  let diamondAddress = process.env.EXAMPLE_PROGRAM ?? "";
+  let diamondAddress = process.env.CALLBACK_ADDRESS ?? "";
 
   if (!switchboardAddress) {
     throw new Error(
@@ -41,7 +41,7 @@ export async function deployDiamond() {
     );
     await diamond.deployed();
     console.log(
-      `Diamond deployed, please run \nexport EXAMPLE_PROGRAM=${diamond.address}`
+      `Diamond deployed, please run \nexport CALLBACK_ADDRESS=${diamond.address}`
     );
     diamondAddress = diamond.address;
   } else {
@@ -114,7 +114,7 @@ export async function deployDiamond() {
   }
 
   console.log("Completed diamond cut");
-  console.log(`export EXAMPLE_PROGRAM=${diamondAddress}`);
+  console.log(`export CALLBACK_ADDRESS=${diamondAddress}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

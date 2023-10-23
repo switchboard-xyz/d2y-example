@@ -112,7 +112,7 @@ More deploy commands are available in [package.json](./package.json) scripts.
 You will see the last line of this script output
 
 ```bash
-export EXAMPLE_PROGRAM=<RECEIVER_ADDRESS>
+export CALLBACK_ADDRESS=<RECEIVER_ADDRESS>
 ```
 
 ### Switchboard Function
@@ -134,7 +134,7 @@ You'll also need to pick a container name that your switchboard function will us
 
 ```bash
 export CONTAINER_NAME=your_docker_username/switchboard-function
-export EXAMPLE_PROGRAM=<RECEIVER_ADDRESS>
+export CALLBACK_ADDRESS=<RECEIVER_ADDRESS>
 ```
 
 Here, set the name of your container and deploy it using:
@@ -142,7 +142,7 @@ Here, set the name of your container and deploy it using:
 ```bash
 cd switchboard-function
 export CONTAINER_NAME=your_docker_username/switchboard-function
-export EXAMPLE_PROGRAM=<RECEIVER_ADDRESS>
+export CALLBACK_ADDRESS=<RECEIVER_ADDRESS>
 make docker_publish
 ```
 
@@ -299,7 +299,7 @@ export VERIFIER=${SWITCHBOARD_ADDRESS?} # can be any valid address
 export PAYER=${SWITCHBOARD_ADDRESS?} # can be any valid address
 export VERIFYING_CONTRACT=${SWITCHBOARD_ADDRESS?} # can be any valid address
 export REWARD_RECEIVER=${SWITCHBOARD_ADDRESS?} # can be any valid address
-export EXAMPLE_PROGRAM=${SWITCHBOARD_ADDRESS?} # can be any valid address
+export CALLBACK_ADDRESS=${SWITCHBOARD_ADDRESS?} # can be any valid address
 cargo build
 cargo run # Note: this will include a warning about a missing quote which can be safely ignored.
 ```

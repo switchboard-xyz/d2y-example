@@ -143,7 +143,7 @@ Here, set the name of your container and deploy it using:
 cd switchboard-function
 export CONTAINER_NAME=your_docker_username/switchboard-function
 export CALLBACK_ADDRESS=<RECEIVER_ADDRESS>
-make docker_publish
+make publish
 ```
 
 Common gotcha: make sure this published container is publically visible

@@ -161,10 +161,10 @@ export MEASUREMENT=<YOUR CONTAINER MEASUREMENT>
 sb evm function create $QUEUE_ADDRESS --container ${CONTAINER_NAME} --containerRegistry dockerhub  --mrEnclave ${MEASUREMENT?} --name "d2y_example"  --chain arbitrum --account /path/to/signer --network testnet --programId $SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET
 ...
 export FUNCTION_ID=<YOUR FUNCTION ID>
-sb evm routine create $FUNCTION_ID --chain $CHAIN --schedule "*/10 * * * * *" --account ~/.arbitrum-kp.txt --network $CLUSTER --programId $SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET --params="YOUR_CALL_PARAMS"
+sb evm routine create $FUNCTION_ID --chain $CHAIN --schedule "*/10 * * * * *" --account /path/to/keypair --network $CLUSTER --programId $SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET --params="YOUR_CALL_PARAMS"
 ...
 export ROUTINE_ID=<YOUR ROUTINE ID>
-sb evm routine fund ${ROUTINE_ID?} --chain $CHAIN --fundAmount 0.01 --account ~/.arbitrum-kp.txt --network $CLUSTER --programId $SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET
+sb evm routine fund ${ROUTINE_ID?} --chain $CHAIN --fundAmount 0.01 --account /path/to/keypair --network $CLUSTER --programId $SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET
 ```
 
 ### Printing the state of your callback

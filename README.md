@@ -158,15 +158,13 @@ You can use the Switchboard cli to bind this docker container to an on-chain rep
 export SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET=0xA3c9F9F6E40282e1366bdC01C1D30F7F7F58888e
 export QUEUE_ADDRESS=0x54f8A91bE5baAD3E2368b00A11bF4012EA6b031F # default testnet queue
 export MEASUREMENT=<YOUR CONTAINER MEASUREMENT>
-sb evm function create $QUEUE_ADDRESS --container ${CONTAINER_NAME} --schedule "*/30 * * * * *" --containerRegistry dockerhub  --mrEnclave ${MEASUREMENT?} --name "d2y_example" --fundAmount 0.025 --chain arbitrum --account /path/to/signer --network testnet --programId $SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET
-```
-
-### Adding Funding to Function
-
-Add funds to your function by doing the following:
-
-```bash
-sb evm function fund $FUNCTION_ID --fundAmount .1 --chain $CHAIN --account /path/to/signer --network $CLUSTER --programId $SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET
+sb evm function create $QUEUE_ADDRESS --container ${CONTAINER_NAME} --containerRegistry dockerhub  --mrEnclave ${MEASUREMENT?} --name "d2y_example"  --chain arbitrum --account /path/to/signer --network testnet --programId $SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET
+...
+export FUNCTION_ID=<YOUR FUNCTION ID>
+sb evm routine create $FUNCTION_ID --chain $CHAIN --schedule "*/10 * * * * *" --account ~/.arbitrum-kp.txt --network $CLUSTER --programId $SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET --params="YOUR_CALL_PARAMS"
+...
+export ROUTINE_ID=<YOUR ROUTINE ID>
+sb evm routine fund ${ROUTINE_ID?} --chain $CHAIN --fundAmount 0.01 --account ~/.arbitrum-kp.txt --network $CLUSTER --programId $SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET
 ```
 
 ### Printing the state of your callback

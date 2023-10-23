@@ -125,7 +125,7 @@ Build functions from the `switchboard-function/` directory with
 
 ```bash
 cd switchboard-function
-make docker_build
+make build
 ```
 
 ### Publishing and Initialization

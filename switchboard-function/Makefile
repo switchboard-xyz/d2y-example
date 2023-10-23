@@ -4,17 +4,15 @@
 CARGO_NAME=basic-oracle-function
 DOCKER_IMAGE_NAME=${CONTAINER_NAME}
 
-DOCKER_BUILD_COMMAND=DOCKER_BUILDKIT=1 docker buildx build --platform linux/amd64 --build-arg CARGO_NAME=${CARGO_NAME} --build-arg EXAMPLE_PROGRAM=${EXAMPLE_PROGRAM}
+DOCKER_BUILD_COMMAND=DOCKER_BUILDKIT=1 docker buildx build --platform linux/amd64 --build-arg CARGO_NAME=${CARGO_NAME} --build-arg CALLBACK_ADDRESS=${CALLBACK_ADDRESS}
 
 # Default make task
 all: build
 
 docker_build:
 	${DOCKER_BUILD_COMMAND} -f Dockerfile -t ${DOCKER_IMAGE_NAME} --load ./
-	@make measurement
 docker_publish:
 	${DOCKER_BUILD_COMMAND} -f Dockerfile -t ${DOCKER_IMAGE_NAME} --push ./
-	@make measurement
 
 build: docker_build measurement
 

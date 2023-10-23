@@ -3,8 +3,8 @@ FROM switchboardlabs/sgx-function:main AS builder
 
 ARG CARGO_NAME=switchboard-function-evm
 ENV CARGO_NAME=$CARGO_NAME
-ARG EXAMPLE_PROGRAM
-ENV EXAMPLE_PROGRAM=$EXAMPLE_PROGRAM
+ARG CALLBACK_ADDRESS
+ENV CALLBACK_ADDRESS=$CALLBACK_ADDRESS
 
 WORKDIR /home/root/switchboard-function/sgx-function
 COPY ./Cargo.toml  ./

@@ -1,17 +1,20 @@
-use chrono::Utc;
+use ethers::prelude::*;
 use ethers::{
     prelude::{abigen, SignerMiddleware},
     providers::{Http, Provider},
     types::Address,
 };
+use futures::TryFutureExt;
 use rust_decimal::prelude::FromPrimitive;
 use rust_decimal::Decimal;
 use serde::Deserialize;
 use switchboard_evm::sdk::EVMFunctionRunner;
+use switchboard_evm::*;
 pub use switchboard_utils::reqwest;
 
 abigen!(Receiver, r#"[ function callback(int256, uint256) ]"#,);
-static UNUSED_URL: &str = "https://goerli-rollup.arbitrum.io/rpc";
+static CLIENT_URL: &str = "https://goerli-rollup.arbitrum.io/rpc";
+static RECEIVER: &str = env!("CALLBACK_ADDRESS");
 
 #[derive(Debug, Deserialize)]
 pub struct DeribitRespnseInner {
@@ -23,30 +26,35 @@ pub struct DeribitResponse {
     pub result: DeribitRespnseInner,
 }
 
-#[tokio::main(worker_threads = 12)]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // --- Initialize clients ---
-    let function_runner = EVMFunctionRunner::new()?;
-    let receiver: Address = env!("EXAMPLE_PROGRAM").parse()?;
-    let provider = Provider::<Http>::try_from(UNUSED_URL)?;
-    let signer = function_runner.enclave_wallet.clone();
-    let client = SignerMiddleware::new_with_provider_chain(provider, signer).await?;
+#[sb_function(expiration_seconds = 120, gas_limit = 5_500_000)]
+async fn sb_function<M: Middleware, S: Signer>(
+    client: SignerMiddleware<M, S>,
+    _: NoParams,
+) -> Result<Vec<FnCall<M, S>>, Error> {
+    let receiver: Address = RECEIVER.parse().map_err(|_| Error::ParseError)?;
     let receiver_contract = Receiver::new(receiver, client.into());
 
     // --- Logic Below ---
-    let url = "https://www.deribit.com/api/v2/public/get_order_book?instrument_name=ETH-29SEP23-2000-C";
-    let derebit_response: DeribitResponse = reqwest::get(url).await?.json().await?;
+    let url =
+        "https://www.deribit.com/api/v2/public/get_order_book?instrument_name=ETH-29SEP23-2000-C";
+    let derebit_response: DeribitResponse = reqwest::get(url)
+        .and_then(|r| r.json())
+        .await
+        .map_err(|_| Error::FetchError)?;
 
     let timestamp = derebit_response.result.timestamp.into();
-    let mut mark_iv = Decimal::from_f64(derebit_response.result.mark_iv).unwrap();
+    let mut mark_iv =
+        Decimal::from_f64(derebit_response.result.mark_iv).ok_or(Error::ParseError)?;
     mark_iv.rescale(8);
-
-    // --- Send the callback to the contract with Switchboard verification ---
     let callback = receiver_contract.callback(mark_iv.mantissa().into(), timestamp);
-    let expiration = (Utc::now().timestamp() + 120).into();
-    let gas_limit = 5_500_000.into();
-    function_runner.emit(receiver, expiration, gas_limit, vec![callback])?;
-    Ok(())
+    // --- Send the callback to the contract with Switchboard verification ---
+    Ok(vec![callback])
+}
+
+#[sb_error]
+enum Error {
+    ParseError = 1,
+    FetchError,
 }
 
 /// Run `cargo test -- --nocapture`

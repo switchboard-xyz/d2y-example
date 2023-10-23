@@ -66,12 +66,7 @@ mod tests {
     async fn test() {
         let derebit_response: DeribitResponse = reqwest::get(
             "https://www.deribit.com/api/v2/public/get_order_book?instrument_name=ETH-29SEP23-2000-C",
-        )
-            .await
-            .unwrap()
-            .json()
-            .await
-            .unwrap();
+        ).and_then(|r| r.json()).await.unwrap();
         println!("{:#?}", derebit_response);
     }
 }

@@ -80,7 +80,7 @@ pnpm i
 ### Install Switchboard cli
 
 ```bash
-npm i -g @switchboard-xyz/cli@latest
+pnpm i -g @switchboard-xyz/cli@latest
 sb evm function --help
 ```
 
@@ -88,7 +88,7 @@ sb evm function --help
 
 ### Contract
 
-This example contract acts as the ingestor of the switchboard-function in this directory to fetch implied volatility parameters via deribit. The example contract is an example of the [ERC2535 diamond contract pattern](https://autifynetwork.com/exploring-erc-2535-the-diamond-standard-for-smart-contracts/) so it can be extended and upgraded for your needs.
+This example contract acts as the ingester of the switchboard-function in this directory to fetch implied volatility parameters via deribit. The example contract is an example of the [ERC2535 diamond contract pattern](https://autifynetwork.com/exploring-erc-2535-the-diamond-standard-for-smart-contracts/) so it can be extended and upgraded for your needs.
 
 When you deploy this contract, it will await to be bound to a switchboard function calling into it.
 
@@ -150,15 +150,17 @@ Common gotcha: make sure this published container is publically visible
 
 After this is published, you are free to make your function account to set the rate of run for the function.
 
+You'll also need to create a file with your private key in it. This is used to sign the transactions that will be sent to the switchboard contract.
+
 ### Initializing the function
 
 You can use the Switchboard cli to bind this docker container to an on-chain representation:
 
 ```bash
 export SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET=0xA3c9F9F6E40282e1366bdC01C1D30F7F7F58888e
-export QUEUE_ADDRESS=0x54f8A91bE5baAD3E2368b00A11bF4012EA6b031F # default testnet queue
+export QUEUE_ID=0x54f8A91bE5baAD3E2368b00A11bF4012EA6b031F # default testnet queue
 export MEASUREMENT=<YOUR CONTAINER MEASUREMENT>
-sb evm function create $QUEUE_ADDRESS --container ${CONTAINER_NAME} --containerRegistry dockerhub  --mrEnclave ${MEASUREMENT?} --name "d2y_example"  --chain arbitrum --account /path/to/signer --network testnet --programId $SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET
+sb evm function create $QUEUE_ID --container ${CONTAINER_NAME} --containerRegistry dockerhub  --mrEnclave ${MEASUREMENT?} --name "options_example"  --chain arbitrum --account /path/to/signer --network testnet --programId $SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET
 ...
 export FUNCTION_ID=<YOUR FUNCTION ID>
 sb evm routine create $FUNCTION_ID --chain $CHAIN --schedule "*/10 * * * * *" --account /path/to/keypair --network $CLUSTER --programId $SWITCHBOARD_ADDRESS_ARBITRUM_TESTNET --params="YOUR_CALL_PARAMS"
@@ -208,79 +210,63 @@ switchboard-evm = "0.3.9"
 main.rs
 
 ```rust
+use ethers::prelude::*;
 use ethers::{
-    prelude::{abigen, SignerMiddleware, ContractCall},
+    prelude::{abigen, SignerMiddleware},
     providers::{Http, Provider},
-    types::{U256},
+    types::Address,
 };
-use rand;
-use std::sync::Arc;
-use std::time::{SystemTime, Duration};
-use switchboard_evm::{
-    sdk::{EVMFunctionRunner, EVMMiddleware},
-};
+use futures::TryFutureExt;
+use rust_decimal::prelude::FromPrimitive;
+use rust_decimal::Decimal;
+use serde::Deserialize;
+use switchboard_evm::sdk::EVMFunctionRunner;
+use switchboard_evm::*;
+pub use switchboard_utils::reqwest;
 
-#[tokio::main(worker_threads = 12)]
-async fn main() {
+abigen!(Receiver, r#"[ function callback(int256, uint256) ]"#,);
+static CLIENT_URL: &str = "https://goerli-rollup.arbitrum.io/rpc";
+static RECEIVER: &str = env!("CALLBACK_ADDRESS");
 
-    // define the abi for the functions in the contract you'll be calling
-    // -- here it's just a function named "callback", expecting a random u256
-    abigen!(
-        Receiver,
-        r#"[
-            function callback(uint256)
-        ]"#,
-    );
+#[derive(Debug, Deserialize)]
+pub struct DeribitRespnseInner {
+    pub mark_iv: f64,
+    pub timestamp: u64,
+}
+#[derive(Debug, Deserialize)]
+pub struct DeribitResponse {
+    pub result: DeribitRespnseInner,
+}
 
-    // Generates a new enclave wallet, pulls in relevant environment variables
-    let function_runner = EVMFunctionRunner::new().unwrap();
+#[sb_function(expiration_seconds = 120, gas_limit = 5_500_000)]
+async fn sb_function<M: Middleware, S: Signer>(
+    client: SignerMiddleware<M, S>,
+    _: NoParams,
+) -> Result<Vec<FnCall<M, S>>, Error> {
+    let receiver: Address = RECEIVER.parse().map_err(|_| Error::ParseError)?;
+    let receiver_contract = Receiver::new(receiver, client.into());
 
-    // set the gas limit and expiration date
-    let gas_limit = 1000000;
-    let expiration_time_seconds = 60;
-    let current_time = SystemTime::now()
-            .duration_since(SystemTime::UNIX_EPOCH)
-            .unwrap_or(Duration::ZERO)
-            .as_secs() + 64;
+    // --- Logic Below ---
+    let url =
+        "https://www.deribit.com/api/v2/public/get_order_book?instrument_name=ETH-29SEP23-2000-C";
+    let derebit_response: DeribitResponse = reqwest::get(url)
+        .and_then(|r| r.json())
+        .await
+        .map_err(|_| Error::FetchError)?;
 
+    let timestamp = derebit_response.result.timestamp.into();
+    let mut mark_iv =
+        Decimal::from_f64(derebit_response.result.mark_iv).ok_or(Error::ParseError)?;
+    mark_iv.rescale(8);
+    let callback = receiver_contract.callback(mark_iv.mantissa().into(), timestamp);
+    // --- Send the callback to the contract with Switchboard verification ---
+    Ok(vec![callback])
+}
 
-    // create a client, wallet and middleware. This is just so we can create the contract instance and sign the txn.
-    // @TODO: update the provider to whichever network you're using
-    let provider = Provider::<Http>::try_from("https://goerli-rollup.arbitrum.io/rpc").unwrap();
-    let client = Arc::new(
-        SignerMiddleware::new_with_provider_chain(provider.clone(), function_runner.enclave_wallet.clone())
-            .await
-            .unwrap(),
-    );
-
-    // @TODO: your target contract address here
-    // In the push receiver example this is set via environment variable
-    let contract_address = "0x1cEA45f047FEa89887B79ce28723852f288eE09B"
-        .parse::<ethers::types::Address>()
-        .unwrap();
-    let receiver_contract = Receiver::new(contract_address, client);
-
-    // generate a random number U256
-    let random: [u64; 4] = rand::random();
-    let random = U256(random);
-
-    // call function
-    let contract_fn_call: ContractCall<EVMMiddleware<_>, _> =
-        receiver_contract.callback(random);
-
-    // create a vec of contract calls to pass to the function runner
-    let calls = vec![contract_fn_call.clone()];
-
-    // Emit the result
-    // This will encode and sent the function data and run them as metatransactions
-    // (in a single-tx) originating from the switchboard contract with the functionId encoded as the sender
-    // https://eips.ethereum.org/EIPS/eip-2771
-    function_runner.emit(
-        contract_address,
-        current_time.try_into().unwrap(),
-        gas_limit.into(),
-        calls,
-    ).unwrap();
+#[sb_error]
+enum Error {
+    ParseError = 1,
+    FetchError,
 }
 ```
 
@@ -298,6 +284,9 @@ export PAYER=${SWITCHBOARD_ADDRESS?} # can be any valid address
 export VERIFYING_CONTRACT=${SWITCHBOARD_ADDRESS?} # can be any valid address
 export REWARD_RECEIVER=${SWITCHBOARD_ADDRESS?} # can be any valid address
 export CALLBACK_ADDRESS=${SWITCHBOARD_ADDRESS?} # can be any valid address
+export FUNCTION_PARAMS="" # base 64 encoded params bytes for your function base64(serde_json::to_bytes(Vec<String>))
+export FUNCTION_CALL_IDS="" # base 64 encoded function call ids  base64(serde_json::to_bytes(Vec<String>))
+
 cargo build
 cargo run # Note: this will include a warning about a missing quote which can be safely ignored.
 ```

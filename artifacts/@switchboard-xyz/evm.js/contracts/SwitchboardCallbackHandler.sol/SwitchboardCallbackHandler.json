@@ -1,0 +1,48 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "SwitchboardCallbackHandler",
+  "sourceName": "@switchboard-xyz/evm.js/contracts/SwitchboardCallbackHandler.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "expected",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "received",
+          "type": "address"
+        }
+      ],
+      "name": "SwitchboardCallbackHandler__InvalidFunction",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "expected",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "received",
+          "type": "address"
+        }
+      ],
+      "name": "SwitchboardCallbackHandler__InvalidSender",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "SwitchboardCallbackHandler__MissingFunctionId",
+      "type": "error"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

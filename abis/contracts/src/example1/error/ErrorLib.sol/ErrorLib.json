@@ -1,0 +1,6 @@
+[
+  "error ACLAdminAlreadyInitialized()",
+  "error ACLNotAdmin(address)",
+  "error Generic(address)",
+  "error InvalidSender(address,address)"
+]

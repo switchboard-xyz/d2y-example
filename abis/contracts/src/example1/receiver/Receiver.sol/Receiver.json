@@ -1,0 +1,7 @@
+[
+  "error SwitchboardCallbackHandler__InvalidFunction(address,address)",
+  "error SwitchboardCallbackHandler__InvalidSender(address,address)",
+  "error SwitchboardCallbackHandler__MissingFunctionId()",
+  "function callback(int256,uint256)",
+  "function viewData() view returns (int256, uint256)"
+]

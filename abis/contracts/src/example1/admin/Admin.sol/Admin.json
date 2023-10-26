@@ -1,0 +1,13 @@
+[
+  "error ACLAdminAlreadyInitialized()",
+  "error ACLNotAdmin(address)",
+  "function functionId() view returns (address)",
+  "function initialize(address)",
+  "function isAdmin(address) view returns (bool)",
+  "function isAllowed(address) view returns (bool)",
+  "function setAdmin(address,bool)",
+  "function setAllowed(address,bool)",
+  "function setFunctionId(address)",
+  "function setSwitchboard(address)",
+  "function switchboard() view returns (address)"
+]

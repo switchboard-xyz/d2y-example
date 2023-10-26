@@ -5,8 +5,16 @@
     "strict": true,
     "esModuleInterop": true,
     "outDir": "dist",
-    "declaration": true
+    "declaration": true,
+    "paths": {
+      "@switchboard-xyz/evm.js": ["./node_modules/@switchboard-xyz/evm.js"]
+    }
   },
+  "references": [
+    {
+      "path": "./node_modules/@switchboard-xyz/evm.js/"
+    }
+  ],
   "include": ["./scripts", "./test", "./typechain-types", "./tasks"],
   "files": ["./hardhat.config.ts"],
   "exclude": ["javascript"]

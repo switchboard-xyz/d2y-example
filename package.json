@@ -118,7 +118,7 @@
     "@openzeppelin/contracts": "^4.8.3",
     "@openzeppelin/hardhat-upgrades": "^1.26.0",
     "@switchboard-xyz/common": "^2.2.3",
-    "@switchboard-xyz/evm.js": "3.12.31",
+    "@switchboard-xyz/evm.js": "3.12.34-alpha1.0.11",
     "@tenderly/hardhat-tenderly": "^1.7.7",
     "@truffle/dashboard-hardhat-plugin": "^0.2.7",
     "@typechain/ethers-v5": "^10.2.0",
@@ -134,7 +134,7 @@
     "eslint": "^8.41.0",
     "eslint-config-prettier": "^8.8.0",
     "ethers": "^5.7.2",
-    "hardhat": "^2.17.1",
+    "hardhat": "^2.17.2",
     "hardhat-abi-exporter": "^2.10.1",
     "hardhat-contract-sizer": "^2.10.0",
     "hardhat-diamond-abi": "^3.0.1",
@@ -151,10 +151,10 @@
   },
   "dependencies": {
     "@ethersproject/bytes": "^5.0.0",
+    "@nomicfoundation/hardhat-foundry": "^1.1.1",
     "@solana/web3.js": "^1.68.0",
     "bignumber.js": "^9.1.1",
     "ethereumjs-util": "^7.1.5",
-    "moment-timezone": "^0.5.43",
-    "yargs": "github:yargs/yargs"
+    "moment-timezone": "^0.5.43"
   }
 }

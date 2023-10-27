@@ -205,7 +205,7 @@ dependencies = [
  "rust_decimal",
  "serde",
  "serde_json",
- "switchboard-common 0.9.3",
+ "switchboard-common 0.9.5",
  "switchboard-evm",
  "switchboard-utils",
  "test-log",
@@ -3590,9 +3590,9 @@ dependencies = [
 
 [[package]]
 name = "switchboard-common"
-version = "0.9.3"
+version = "0.9.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1bd773d09cf5922c61831882a0908d024f194c588a26c11bde706b865c56fce4"
+checksum = "ea14d8fd81943403ad32221a234b41cab6faf740c9e62069e672af53079cacc5"
 dependencies = [
  "envy",
  "getrandom",
@@ -3607,9 +3607,9 @@ dependencies = [
 
 [[package]]
 name = "switchboard-evm"
-version = "0.4.16"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "93d057fbbf6f184889914241a99d2d1563296ca76d35f6c2759e9e86df3bdb63"
+checksum = "9e4aec2cb3b3e92c9d4afe8c7c47bdbb4c8610ca9ec5794a49ccf50a430a7fed"
 dependencies = [
  "Inflector",
  "base64 0.21.5",
@@ -3628,7 +3628,7 @@ dependencies = [
  "serde_json",
  "sgx-quote",
  "sha2 0.10.7",
- "switchboard-common 0.9.3",
+ "switchboard-common 0.9.5",
  "syn 2.0.28",
  "tokio",
  "zeroize",

@@ -202,7 +202,7 @@ futures = "0.3"
 
 # at a minimum you'll need to include the following packages
 ethers = { version = "2.0.7", features = ["legacy"] }
-switchboard-evm = "0.3.9"
+switchboard-evm = "0.5.0"
 ```
 
 ### Minimal Switchboard Function
@@ -247,8 +247,7 @@ async fn sb_function<M: Middleware, S: Signer>(
     let receiver_contract = Receiver::new(receiver, client.into());
 
     // --- Logic Below ---
-    let url =
-        "https://www.deribit.com/api/v2/public/get_order_book?instrument_name=ETH-29SEP23-2000-C";
+    let url = "https://www.deribit.com/api/v2/public/get_order_book?instrument_name=ETH-29SEP23-2000-C";
     let derebit_response: DeribitResponse = reqwest::get(url)
         .and_then(|r| r.json())
         .await
@@ -259,6 +258,7 @@ async fn sb_function<M: Middleware, S: Signer>(
         Decimal::from_f64(derebit_response.result.mark_iv).ok_or(Error::ParseError)?;
     mark_iv.rescale(8);
     let callback = receiver_contract.callback(mark_iv.mantissa().into(), timestamp);
+
     // --- Send the callback to the contract with Switchboard verification ---
     Ok(vec![callback])
 }
@@ -277,18 +277,7 @@ We can't guarantee that the function will run on the blockchain, but we can test
 Run the following to test your function:
 
 ```bash
-export CHAIN_ID=12345 # can be any integer
-export FUNCTION_KEY=${FUNCTION_ID?} # can be any valid address
-export VERIFIER=${SWITCHBOARD_ADDRESS?} # can be any valid address
-export PAYER=${SWITCHBOARD_ADDRESS?} # can be any valid address
-export VERIFYING_CONTRACT=${SWITCHBOARD_ADDRESS?} # can be any valid address
-export REWARD_RECEIVER=${SWITCHBOARD_ADDRESS?} # can be any valid address
-export CALLBACK_ADDRESS=${SWITCHBOARD_ADDRESS?} # can be any valid address
-export FUNCTION_PARAMS="" # base 64 encoded params bytes for your function base64(serde_json::to_bytes(Vec<String>))
-export FUNCTION_CALL_IDS="" # base 64 encoded function call ids  base64(serde_json::to_bytes(Vec<String>))
-
-cargo build
-cargo run # Note: this will include a warning about a missing quote which can be safely ignored.
+sb evm function test --parameters PID=Dee8DJ9wEUf7AcqUwjK3ENtrwxZ9YNXifR1B3ipcGzVQ,REQUEST=Dee8DJ9wEUf7AcqUwjK3ENtrwxZ9YNXifR1B3ipcGzVQ --chain arbitrum --network testnet
 ```
 
 Successful output:
@@ -315,69 +304,58 @@ In order to do this you'll need to know the switchboard address you're using, an
 Recipient.sol
 
 ```sol
-//SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
 
-// EIP2771 Context
-// Inherited by all contracts that are recipients of switchboard callbacks
-contract Recipient {
-  address immutable switchboard;
+// Get the Switchboard Library - this is the Core Mainnet Deployment, you can swap this for one of the networks below
+import {SwitchboardCallbackHandler} from "@switchboard-xyz/evm.js/contracts/SwitchboardCallbackHandler.sol";
 
-  constructor(address _switchboard) {
-    switchboard = _switchboard;
-  }
+contract Receiver is SwitchboardCallbackHandler {
+    address public switchboard;
+    address public functionID;
 
-  // get the encoded sender if this message is coming from the switchboard contract
-  // if things are working as intended, the sender will be the functionId
+    function callback(
+        int256 data,
+        uint256 timestamp
+    ) external isSwitchboardCaller isFunctionId {
+        // Set function id on first callback
+        address _functionId = getEncodedFunctionId();
+        if (functionId == address(0)) {
+            functionId = _functionId;
+        }
 
-  function getEncodedFunctionId() internal view returns (address payable signer) {
-    signer = payable(msg.sender);
-    if (msg.data.length >= 20 && signer == switchboard) {
-      assembly {
-        signer := shr(96, calldataload(sub(calldatasize(), 20)))
-      }
-    }
-  }
-}
-```
-
-Example.sol
-
-```sol
-//SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
-
-import { Recipient } from "./Recipient.sol";
-
-contract ReceiverExample is Recipient {
-  uint256 public randomValue;
-  address functionId;
-
-  event NewRandomValue(uint256 value);
-
-  constructor(
-    address _switchboard // Switchboard contract address
-  ) Recipient(_switchboard) {}
-
-  function callback(uint256 value) external {
-    // extract the sender from the callback, this validates that the switchboard contract called this function
-    address msgSender = getEncodedFunctionId();
-
-    if (functionId == address(0)) {
-      // set the functionId if it hasn't been set yet
-      functionId = msgSender;
+        ReceiverLib.callback(data, timestamp);
     }
 
-    // make sure the encoded caller is our function id
-    if (msgSender != functionId) {
-      revert("Invalid sender");
+    function viewData() external view returns (int256, uint256) {
+        return ReceiverLib.viewData();
     }
 
-    // set the random value
-    randomValue = value;
+    // SwitchboardCallbackHandler functions integrated below
 
-    // emit an event
-    emit NewRandomValue(value);
-  }
+    function getSwithboardAddress() internal view override returns (address) {
+        return switchboard;
+    }
+
+    function getSwitchboardFunctionId()
+        internal
+        view
+        override
+        returns (address)
+    {
+        return functionId;
+    }
+
+    // Our own function to get the encoded function id manually
+
+    function getEncodedFunctionId() internal pure returns (address) {
+        if (msg.data.length < 20) {
+            revert SwitchboardCallbackHandler__MissingFunctionId();
+        }
+
+        address receivedFunctionId;
+        assembly {
+            receivedFunctionId := shr(96, calldataload(sub(calldatasize(), 20)))
+        }
+        return receivedFunctionId;
+    }
 }
 ```

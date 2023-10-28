@@ -112,7 +112,7 @@ More deploy commands are available in [package.json](./package.json) scripts.
 You will see the last line of this script output
 
 ```bash
-export CALLBACK_ADDRESS=<RECEIVER_ADDRESS>
+export CALLBACK_ADDRESS=<CALLBACK_ADDRESS>
 ```
 
 ### Switchboard Function

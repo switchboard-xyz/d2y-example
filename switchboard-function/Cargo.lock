@@ -205,7 +205,7 @@ dependencies = [
  "rust_decimal",
  "serde",
  "serde_json",
- "switchboard-common 0.9.5",
+ "switchboard-common 0.9.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "switchboard-evm",
  "switchboard-utils",
  "test-log",
@@ -3156,9 +3156,7 @@ dependencies = [
 
 [[package]]
 name = "sb_macros"
-version = "0.1.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6803dd342feb096dc14c4d90989a28cf972b4f2872e7b74d203098d60c9f174a"
+version = "0.1.8"
 dependencies = [
  "base64 0.21.5",
  "bytemuck",
@@ -3589,8 +3587,6 @@ dependencies = [
 [[package]]
 name = "switchboard-common"
 version = "0.9.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ea14d8fd81943403ad32221a234b41cab6faf740c9e62069e672af53079cacc5"
 dependencies = [
  "envy",
  "getrandom",
@@ -3604,10 +3600,22 @@ dependencies = [
 ]
 
 [[package]]
-name = "switchboard-evm"
-version = "0.5.0"
+name = "switchboard-common"
+version = "0.9.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9e4aec2cb3b3e92c9d4afe8c7c47bdbb4c8610ca9ec5794a49ccf50a430a7fed"
+checksum = "ea14d8fd81943403ad32221a234b41cab6faf740c9e62069e672af53079cacc5"
+dependencies = [
+ "hex",
+ "log",
+ "serde",
+ "serde_json",
+ "sha2 0.10.7",
+ "sha3 0.9.1",
+]
+
+[[package]]
+name = "switchboard-evm"
+version = "0.5.7"
 dependencies = [
  "Inflector",
  "base64 0.21.5",

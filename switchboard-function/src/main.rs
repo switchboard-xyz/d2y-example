@@ -1,8 +1,9 @@
 use ethers::prelude::*;
 use ethers::{
+    abi::AbiDecode,
     prelude::{abigen, SignerMiddleware},
     providers::{Http, Provider},
-    types::Address,
+    types::{Address, U256},
 };
 use futures::TryFutureExt;
 use rust_decimal::prelude::FromPrimitive;
@@ -24,6 +25,18 @@ pub struct DeribitRespnseInner {
 #[derive(Debug, Deserialize)]
 pub struct DeribitResponse {
     pub result: DeribitRespnseInner,
+}
+
+#[derive(Default, Debug, Clone, EthAbiType, EthAbiCodec)]
+struct Params {
+    order_id: Address,
+    timestamp: U256,
+}
+
+impl SbFunctionParameters for Params {
+    fn parse(data: &[u8]) -> Self {
+        Params::decode(data).unwrap_or_default()
+    }
 }
 
 #[sb_function(expiration_seconds = 120, gas_limit = 5_500_000)]

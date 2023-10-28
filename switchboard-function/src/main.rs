@@ -30,7 +30,7 @@ pub struct DeribitResponse {
 #[derive(Default, Debug, Clone, EthAbiType, EthAbiCodec)]
 struct Params {
     order_id: Address,
-    timestamp: U256,
+    value: U256,
 }
 
 impl SbFunctionParameters for Params {
@@ -42,10 +42,16 @@ impl SbFunctionParameters for Params {
 #[sb_function(expiration_seconds = 120, gas_limit = 5_500_000)]
 async fn sb_function<M: Middleware, S: Signer>(
     client: SignerMiddleware<M, S>,
-    _: NoParams,
+    params: Params,
 ) -> Result<Vec<FnCall<M, S>>, Error> {
     let receiver: Address = RECEIVER.parse().map_err(|_| Error::ParseError)?;
     let receiver_contract = Receiver::new(receiver, client.into());
+
+    // Example reading params
+    println!(
+        "Received order {:?} value {}",
+        params.order_id, params.value
+    );
 
     // --- Logic Below ---
     let url =

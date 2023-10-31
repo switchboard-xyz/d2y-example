@@ -1,8 +1,9 @@
 use ethers::prelude::*;
 use ethers::{
+    abi::AbiDecode,
     prelude::{abigen, SignerMiddleware},
     providers::{Http, Provider},
-    types::Address,
+    types::{Address, U256},
 };
 use futures::TryFutureExt;
 use rust_decimal::prelude::FromPrimitive;
@@ -26,13 +27,31 @@ pub struct DeribitResponse {
     pub result: DeribitRespnseInner,
 }
 
+#[derive(Default, Debug, Clone, EthAbiType, EthAbiCodec)]
+struct Params {
+    order_id: Address,
+    value: U256,
+}
+
+impl SbFunctionParameters for Params {
+    fn parse(data: &[u8]) -> Self {
+        Params::decode(data).unwrap_or_default()
+    }
+}
+
 #[sb_function(expiration_seconds = 120, gas_limit = 5_500_000)]
 async fn sb_function<M: Middleware, S: Signer>(
     client: SignerMiddleware<M, S>,
-    _: NoParams,
+    params: Params,
 ) -> Result<Vec<FnCall<M, S>>, Error> {
     let receiver: Address = RECEIVER.parse().map_err(|_| Error::ParseError)?;
     let receiver_contract = Receiver::new(receiver, client.into());
+
+    // Example reading params
+    println!(
+        "Received order {:?} value {}",
+        params.order_id, params.value
+    );
 
     // --- Logic Below ---
     let url =

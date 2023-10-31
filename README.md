@@ -80,7 +80,7 @@ pnpm i
 ### Install Switchboard cli
 
 ```bash
-pnpm i -g @switchboard-xyz/cli@latest
+pnpm i -g @switchboard-xyz/cli@3.2.13-alpha0.0.14
 sb evm function --help
 ```
 
@@ -112,7 +112,7 @@ More deploy commands are available in [package.json](./package.json) scripts.
 You will see the last line of this script output
 
 ```bash
-export CALLBACK_ADDRESS=<RECEIVER_ADDRESS>
+export CALLBACK_ADDRESS=<CALLBACK_ADDRESS>
 ```
 
 ### Switchboard Function
@@ -277,7 +277,7 @@ We can't guarantee that the function will run on the blockchain, but we can test
 Run the following to test your function:
 
 ```bash
-sb evm function test --parameters PID=Dee8DJ9wEUf7AcqUwjK3ENtrwxZ9YNXifR1B3ipcGzVQ,REQUEST=Dee8DJ9wEUf7AcqUwjK3ENtrwxZ9YNXifR1B3ipcGzVQ --chain arbitrum --network testnet
+sb evm function test --parameters uint256:0 --chain arbitrum --network testnet
 ```
 
 Successful output:
